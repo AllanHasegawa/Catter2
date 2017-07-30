@@ -13,7 +13,9 @@ import android.view.View;
 
 import java.util.List;
 
+import io.catter2.favorites.FavoritesRepository;
 import io.catter2.favorites.GetFavoritesUseCase;
+import io.catter2.favorites.SharedPrefFavoritesRepository;
 
 public class FavoritesActivity extends AppCompatActivity {
 
@@ -62,7 +64,8 @@ public class FavoritesActivity extends AppCompatActivity {
         }
         Log.d(TAG, "UserToken: " + userToken);
 
-        getFavoritesUseCase = new GetFavoritesUseCase(this, userToken);
+        FavoritesRepository favoritesRepository = new SharedPrefFavoritesRepository(this, userToken);
+        getFavoritesUseCase = new GetFavoritesUseCase(favoritesRepository);
         getFavoritesUseCase.getFavorites(new GetFavoritesUseCase.Callback() {
             @Override
             public void favoriteUrlsUpdated(List<String> favoriteUrls) {

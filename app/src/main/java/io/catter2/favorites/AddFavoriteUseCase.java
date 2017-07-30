@@ -1,14 +1,12 @@
 package io.catter2.favorites;
 
-import android.content.Context;
-
 import java.util.List;
 
 public class AddFavoriteUseCase {
     private FavoritesRepository repo;
 
-    public AddFavoriteUseCase(Context context, String userToken) {
-        repo = new FavoritesRepository(context, userToken);
+    public AddFavoriteUseCase(FavoritesRepository favoritesRepository) {
+        this.repo = favoritesRepository;
     }
 
     /**

@@ -17,7 +17,11 @@ import com.plattysoft.leonids.ParticleSystem;
 import java.util.List;
 
 import io.catter2.cat_api.FetchCatImagesUseCase;
+import io.catter2.cat_api.RetrofitTheCatAPI;
+import io.catter2.cat_api.TheCatAPI;
 import io.catter2.favorites.AddFavoriteUseCase;
+import io.catter2.favorites.FavoritesRepository;
+import io.catter2.favorites.SharedPrefFavoritesRepository;
 
 public class ListActivity extends AppCompatActivity {
     private static String TAG = "List";
@@ -60,8 +64,10 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        addFavoriteUseCase = new AddFavoriteUseCase(this, userToken);
-        fetchCatImagesUseCase = new FetchCatImagesUseCase();
+        FavoritesRepository favoritesRepository = new SharedPrefFavoritesRepository(this, userToken);
+        addFavoriteUseCase = new AddFavoriteUseCase(favoritesRepository);
+        TheCatAPI catAPI = new RetrofitTheCatAPI();
+        fetchCatImagesUseCase = new FetchCatImagesUseCase(catAPI);
 
         fetchCatImagesUseCase.getImagesUrls(new FetchCatImagesUseCase.Callback() {
             @Override
