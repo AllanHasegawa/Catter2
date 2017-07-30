@@ -2,7 +2,6 @@ package io.catter2;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
+import io.catter2.favorites.GetFavoritesUseCase;
 
 public class FavoritesActivity extends AppCompatActivity {
 
-    static String SP_USER_FAVORITES_KEY = "user-favorites-urls-%s";
     private static String TAG = "ImagesRvAdapter";
     private static String ARG_USER_TOKEN = "favorites-user-token";
 
@@ -36,7 +32,8 @@ public class FavoritesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImagesRvAdapter rvAdapter;
     private String userToken;
-    private SharedPreferences.OnSharedPreferenceChangeListener sharedPrefListener;
+
+    private GetFavoritesUseCase getFavoritesUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,59 +62,20 @@ public class FavoritesActivity extends AppCompatActivity {
         }
         Log.d(TAG, "UserToken: " + userToken);
 
-        setupFavoritesSharedPref(userToken);
+        getFavoritesUseCase = new GetFavoritesUseCase(this, userToken);
+        getFavoritesUseCase.getFavorites(new GetFavoritesUseCase.Callback() {
+            @Override
+            public void favoriteUrlsUpdated(List<String> favoriteUrls) {
+                Log.d(TAG, "Updated favorites: " + favoriteUrls.toString());
+                rvAdapter.updateImageUrls(favoriteUrls);
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
-        SharedPreferences pref = getSharedPreferences(
-                getString(R.string.pref_key_user_data), Context.MODE_PRIVATE);
-        pref.unregisterOnSharedPreferenceChangeListener(sharedPrefListener);
+        getFavoritesUseCase.clear();
+        getFavoritesUseCase = null;
         super.onDestroy();
     }
-
-    private void setupFavoritesSharedPref(final String userToken) {
-        SharedPreferences pref = getSharedPreferences(
-                getString(R.string.pref_key_user_data), Context.MODE_PRIVATE);
-        sharedPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                Log.d(TAG, "Key changed: " + key);
-                String prefKey = String.format(SP_USER_FAVORITES_KEY, userToken);
-                if (key.equals(prefKey)) {
-                    updateFavorites(sharedPreferences);
-                }
-            }
-        };
-        pref.registerOnSharedPreferenceChangeListener(sharedPrefListener);
-        updateFavorites(pref);
-    }
-
-    private void updateFavorites(SharedPreferences pref) {
-        String prefKey = String.format(SP_USER_FAVORITES_KEY, userToken);
-        Log.d(TAG, "PrefKey: " + prefKey);
-        Set<String> entriesSet = pref.getStringSet(prefKey, new HashSet<String>());
-
-        ArrayList<FavoriteModel> favorites = new ArrayList<>(entriesSet.size());
-        for (String entry : entriesSet) {
-            String[] decoded = entry.split(";");
-            favorites.add(new FavoriteModel(Long.valueOf(decoded[1]), decoded[0]));
-        }
-
-        Collections.sort(favorites, new Comparator<FavoriteModel>() {
-            @Override
-            public int compare(FavoriteModel o1, FavoriteModel o2) {
-                return (int) (o2.getTimeAdded() - o1.getTimeAdded());
-            }
-        });
-
-        ArrayList<String> urlsSorted = new ArrayList<>(favorites.size());
-        for (FavoriteModel favorite : favorites) {
-            urlsSorted.add(favorite.getUrl());
-        }
-
-        Log.d(TAG, "Updated favorites: " + urlsSorted.toString());
-        rvAdapter.updateImageUrls(new ArrayList<>(urlsSorted));
-    }
-
 }

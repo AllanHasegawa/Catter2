@@ -2,7 +2,6 @@ package io.catter2;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,18 +14,10 @@ import android.widget.ImageView;
 
 import com.plattysoft.leonids.ParticleSystem;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import io.catter2.cat_api.CatImageModel;
-import io.catter2.cat_api.CatImagesModel;
-import io.catter2.cat_api.RetrofitTheCatAPI;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
+import io.catter2.cat_api.FetchCatImagesUseCase;
+import io.catter2.favorites.AddFavoriteUseCase;
 
 public class ListActivity extends AppCompatActivity {
     private static String TAG = "List";
@@ -40,6 +31,9 @@ public class ListActivity extends AppCompatActivity {
 
     private String userToken;
     private RecyclerView recyclerView;
+
+    private AddFavoriteUseCase addFavoriteUseCase;
+    private FetchCatImagesUseCase fetchCatImagesUseCase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +60,15 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        fetchCatImages(adapter);
+        addFavoriteUseCase = new AddFavoriteUseCase(this, userToken);
+        fetchCatImagesUseCase = new FetchCatImagesUseCase();
+
+        fetchCatImagesUseCase.getImagesUrls(new FetchCatImagesUseCase.Callback() {
+            @Override
+            public void imagesUrls(List<String> urls) {
+                adapter.updateImageUrls(urls);
+            }
+        });
     }
 
     @Override
@@ -79,71 +81,23 @@ public class ListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void fetchCatImages(final ImagesRvAdapter adapter) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://thecatapi.com/api/")
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .build();
-        RetrofitTheCatAPI retrofitTheCatApi = retrofit.create(RetrofitTheCatAPI.class);
-        retrofitTheCatApi.listCatsWithHat().enqueue(new Callback<CatImagesModel>() {
-            @Override
-            public void onResponse(Call<CatImagesModel> call, Response<CatImagesModel> response) {
-                ArrayList<String> imageUrls = new ArrayList<>();
-                if (response.body().catImages != null) {
-                    for (CatImageModel img : response.body().catImages) {
-                        Log.d(TAG, "Found: " + img.url);
-                        imageUrls.add(img.url);
-                    }
-                }
-                adapter.updateImageUrls(imageUrls);
-            }
-
-            @Override
-            public void onFailure(Call<CatImagesModel> call, Throwable t) {
-                Log.e(TAG, "Error fetching cat images", t);
-            }
-        });
-    }
-
     private void addUrlToUserFavoritesList(ImageView view, String url) {
-        SharedPreferences pref = getSharedPreferences(
-                getString(R.string.pref_key_user_data), Context.MODE_PRIVATE);
-        String prefKey = String.format(FavoritesActivity.SP_USER_FAVORITES_KEY, userToken);
-        Log.d(TAG, "Pref key: " + prefKey);
-        Set<String> oldUrls = pref.getStringSet(prefKey, new HashSet<String>());
+        boolean imageAdded = addFavoriteUseCase.addFavoriteUrl(url);
 
-        boolean hasUrl = false;
-        for (String entry : oldUrls) {
-            String oldUrl = entry.split(";")[0];
-            if (oldUrl.equals(url)) {
-                hasUrl = true;
-                break;
-            }
+        int msgId;
+        if (imageAdded) {
+            msgId = R.string.list_user_favorite_url_added_success;
+            new ParticleSystem(ListActivity.this, 500, R.mipmap.azunyan_2, 2000)
+                    .setAcceleration(0.0005f, 90)
+                    .setSpeedRange(0.2f, 0.5f)
+                    .setRotationSpeedRange(90, 180)
+                    .setInitialRotationRange(0, 180)
+                    .setFadeOut(500)
+                    .setScaleRange(0.1f, 1.0f)
+                    .oneShot(view, 100);
+        } else {
+            msgId = R.string.list_user_favorite_url_already_in;
         }
-
-        if (hasUrl) {
-            Snackbar.make(recyclerView, R.string.list_user_favorite_url_already_in, Snackbar.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-
-        HashSet<String> newUrls = new HashSet<>(oldUrls);
-        long timeNow = System.currentTimeMillis();
-        String timeNowStr = String.valueOf(timeNow);
-        newUrls.add(url + ";" + timeNowStr);
-
-        pref.edit().putStringSet(prefKey, newUrls).apply();
-
-        new ParticleSystem(ListActivity.this, 500, R.mipmap.azunyan_2, 2000)
-                .setAcceleration(0.0005f, 90)
-                .setSpeedRange(0.2f, 0.5f)
-                .setRotationSpeedRange(90, 180)
-                .setInitialRotationRange(0, 180)
-                .setFadeOut(500)
-                .setScaleRange(0.1f, 1.0f)
-                .oneShot(view, 100);
-
-        Snackbar.make(recyclerView, R.string.list_user_favorite_url_added_success, Snackbar.LENGTH_SHORT)
-                .show();
+        Snackbar.make(recyclerView, msgId, Snackbar.LENGTH_SHORT).show();
     }
 }

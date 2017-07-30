@@ -11,17 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import io.catter2.login.LoginUseCase;
+
 /**
  * A login screen that offers login via username/password.
  */
 public class LoginActivity extends AppCompatActivity {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "me:123:token9", "yo:hunter2:token2"
-    };
 
     private AutoCompleteTextView usernameActv;
     private EditText passwordEt;
@@ -59,16 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameActv.getText().toString();
         String password = passwordEt.getText().toString();
 
-        for (String credential : DUMMY_CREDENTIALS) {
-            String[] split = credential.split(":");
-            if (username.equals(split[0]) && password.equals(split[1])) {
-                String token = split[2];
-                FavoritesActivity.launch(this, token, false);
-                return;
-            }
-        }
+        LoginUseCase uc = new LoginUseCase();
+        String token = uc.login(username, password);
 
-        errorTv.setVisibility(View.VISIBLE);
+        if (token != null) {
+            FavoritesActivity.launch(this, token, false);
+        } else {
+            errorTv.setVisibility(View.VISIBLE);
+        }
     }
 }
 

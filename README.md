@@ -1,28 +1,6 @@
 # Catter2
 
-Catter2 is a small educational Android app created to show how to refactor an app to use Dagger2.
-
-Topics covered:
-
-1. [God activities](https://en.wikipedia.org/wiki/God_object)
-1. Single Responsibility Principle
-1. Dependency Injection
-1. Lifetime of instances
-1. Organizing and accessing your instances
-1. and, Dagger2!
-
-
-# In action!
-
-![Catter2 in action](https://giant.gfycat.com/RapidGlassBasilisk.gif)
-
-
-# How to study this repo
-
-All the instructions are in the following blog post:
-
-[TODO: add blog post url here]
-
+Please see the README.md from the master branch.
 
 # License
 
