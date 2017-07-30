@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Catter2</string>
+    <string name="title_activity_favorites">Your favorites</string>
+    <string name="title_activity_list">!❀ㅇㅅㅇ)</string>
+    <string name="pref_key_user_data">pk-catter2-userdata</string>
+
+    <!-- Strings related to login -->
+    <string name="login_prompt_username">Username</string>
+    <string name="login_prompt_password">Password</string>
+    <string name="login_action_sign_in_short">Sign in</string>
+    <string name="login_error_generic">Generic login error</string>
+
+    <!-- Strings related to user data -->
+    <string name="list_user_favorite_url_added_success">Successfully added cat image to your favorites!</string>
+    <string name="list_user_favorite_url_already_in">Cat image already in your favorites.</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
