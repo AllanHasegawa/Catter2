@@ -49,6 +49,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        ((App) getApplication()).destroyFavoritesRepository();
+        super.onResume();
+    }
+
     private void attemptLogin() {
         errorTv.setVisibility(View.GONE);
         String username = usernameActv.getText().toString();
@@ -58,7 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         String token = uc.login(username, password);
 
         if (token != null) {
-            FavoritesActivity.launch(this, token, false);
+            ((App) getApplication()).initializeFavoritesRepository(token);
+            FavoritesActivity.launch(this);
         } else {
             errorTv.setVisibility(View.VISIBLE);
         }
