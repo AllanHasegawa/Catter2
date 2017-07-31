@@ -1,46 +1,25 @@
 package io.catter2;
 
 import android.app.Application;
+import android.content.Context;
+import android.util.Log;
 
-import io.catter2.cat_api.CacheTheCatAPI;
-import io.catter2.cat_api.RetrofitTheCatAPI;
-import io.catter2.cat_api.TheCatAPI;
-import io.catter2.favorites.FavoritesRepository;
-import io.catter2.favorites.SharedPrefFavoritesRepository;
+import io.catter2.di.AppDIComponent;
+import io.catter2.di.AppDIModule;
+import io.catter2.di.CachedRetrofitCatApiDIModule;
 
 public class App extends Application {
-    private static TheCatAPI theCatAPI;
-    private static FavoritesRepository favoritesRepository;
-
-    public static TheCatAPI getTheCatAPIService() {
-        return App.theCatAPI;
-    }
-
-    public static FavoritesRepository getFavoritesRepository() {
-        return App.favoritesRepository;
-    }
-
-
     @Override
     public void onCreate() {
         super.onCreate();
 
-        TheCatAPI theCatAPIService = new RetrofitTheCatAPI();
-        TheCatAPI theCatAPICache = new CacheTheCatAPI(theCatAPIService);
-        App.theCatAPI = theCatAPICache;
-    }
-
-    public void initializeFavoritesRepository(String userToken) {
-        if (App.favoritesRepository != null) {
-            throw new RuntimeException("FavoritesRepository already initialized.");
-        }
-        App.favoritesRepository = new SharedPrefFavoritesRepository(this, userToken);
-    }
-
-    public void destroyFavoritesRepository() {
-        if (App.favoritesRepository != null) {
-            App.favoritesRepository.clearChangeListener();
-            App.favoritesRepository = null;
-        }
+        Log.d("App", "Initialized");
+        AppDIModule appDIModule = new AppDIModule() {
+            @Override
+            public Context provideAppContext() {
+                return App.this;
+            }
+        };
+        AppDIComponent.initialize(appDIModule, new CachedRetrofitCatApiDIModule());
     }
 }
