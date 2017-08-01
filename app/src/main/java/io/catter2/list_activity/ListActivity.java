@@ -1,4 +1,4 @@
-package io.catter2;
+package io.catter2.list_activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +15,9 @@ import com.plattysoft.leonids.ParticleSystem;
 
 import java.util.List;
 
+import io.catter2.ImagesRvAdapter;
+import io.catter2.R;
 import io.catter2.cat_api.FetchCatImagesUseCase;
-import io.catter2.di.UserDIComponent;
 import io.catter2.favorites.AddFavoriteUseCase;
 
 public class ListActivity extends AppCompatActivity {
@@ -31,6 +32,14 @@ public class ListActivity extends AppCompatActivity {
 
     private AddFavoriteUseCase addFavoriteUseCase;
     private FetchCatImagesUseCase fetchCatImagesUseCase;
+
+    public void injectAddFavoriteUseCase(AddFavoriteUseCase useCase) {
+        this.addFavoriteUseCase = useCase;
+    }
+
+    public void injectFetchCatImagesUseCase(FetchCatImagesUseCase useCase) {
+        this.fetchCatImagesUseCase = useCase;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +59,7 @@ public class ListActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
-        addFavoriteUseCase = new AddFavoriteUseCase(UserDIComponent.get().getFavoritesRepository());
-        fetchCatImagesUseCase = new FetchCatImagesUseCase(UserDIComponent.get().getTheCatAPIService());
+        new ListActivityDIComponent().inject(this);
 
         fetchCatImagesUseCase.getImagesUrls(new FetchCatImagesUseCase.Callback() {
             @Override

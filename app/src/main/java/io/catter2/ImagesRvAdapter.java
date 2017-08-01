@@ -55,7 +55,7 @@ public class ImagesRvAdapter extends RecyclerView.Adapter<ImagesRvAdapter.ImageV
         Picasso picasso = Picasso.with(holder.imageIv.getContext());
         picasso.setIndicatorsEnabled(false);
         picasso.setLoggingEnabled(true);
-        picasso.load(imageUrl).into(holder.imageIv);
+        picasso.load(imageUrl).error(R.mipmap.azunyan_2).into(holder.imageIv);
 
         if (onClickListener != null) {
             holder.imageIv.setOnClickListener(new View.OnClickListener() {

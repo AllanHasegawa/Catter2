@@ -8,5 +8,5 @@
     android:layout_height="match_parent"
     android:scrollbars="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="io.catter2.ListActivity"
+    tools:context="io.catter2.list_activity.ListActivity"
     tools:showIn="@layout/activity_list"/>

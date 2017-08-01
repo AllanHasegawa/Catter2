@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="io.catter2.ListActivity">
+    tools:context="io.catter2.list_activity.ListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

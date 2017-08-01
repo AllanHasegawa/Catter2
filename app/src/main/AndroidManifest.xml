@@ -31,7 +31,7 @@
                 android:value="io.catter2.LoginActivity"/>
         </activity>
         <activity
-            android:name=".ListActivity"
+            android:name=".list_activity.ListActivity"
             android:label="@string/title_activity_list"
             android:parentActivityName=".favorites_activity.FavoritesActivity"
             android:theme="@style/AppTheme.NoActionBar">
