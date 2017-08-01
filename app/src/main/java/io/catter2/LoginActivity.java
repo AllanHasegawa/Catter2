@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import io.catter2.di.AppDIComponent;
 import io.catter2.di.SharedPrefFavoritesRepoDIModule;
 import io.catter2.di.UserDIComponent;
 import io.catter2.favorites_activity.FavoritesActivity;
@@ -70,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         String token = uc.login(username, password);
 
         if (token != null) {
-            UserDIComponent.initialize(new SharedPrefFavoritesRepoDIModule(AppDIComponent.get(), token));
+            UserDIComponent.initialize(new SharedPrefFavoritesRepoDIModule(token));
             FavoritesActivity.launch(this);
         } else {
             errorTv.setVisibility(View.VISIBLE);

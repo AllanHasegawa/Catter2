@@ -15,6 +15,8 @@ import com.plattysoft.leonids.ParticleSystem;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.catter2.ImagesRvAdapter;
 import io.catter2.R;
 import io.catter2.cat_api.FetchCatImagesUseCase;
@@ -28,18 +30,12 @@ public class ListActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    @Inject
+    public AddFavoriteUseCase addFavoriteUseCase;
+    @Inject
+    public FetchCatImagesUseCase fetchCatImagesUseCase;
+
     private RecyclerView recyclerView;
-
-    private AddFavoriteUseCase addFavoriteUseCase;
-    private FetchCatImagesUseCase fetchCatImagesUseCase;
-
-    public void injectAddFavoriteUseCase(AddFavoriteUseCase useCase) {
-        this.addFavoriteUseCase = useCase;
-    }
-
-    public void injectFetchCatImagesUseCase(FetchCatImagesUseCase useCase) {
-        this.fetchCatImagesUseCase = useCase;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +55,7 @@ public class ListActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
-        new ListActivityDIComponent().inject(this);
+        ListActivityDIComponent.initializeAndInject(this);
 
         fetchCatImagesUseCase.getImagesUrls(new FetchCatImagesUseCase.Callback() {
             @Override

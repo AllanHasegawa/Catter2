@@ -4,7 +4,7 @@ import io.catter2.cat_api.CacheTheCatAPI;
 import io.catter2.cat_api.RetrofitTheCatAPI;
 import io.catter2.cat_api.TheCatAPI;
 
-public class CachedRetrofitCatApiDIModule implements TheCatAPIDIModule {
+public class CachedRetrofitCatApiDIModule extends TheCatAPIDIModule {
     @Override
     public TheCatAPI provideTheCatAPI() {
         return provideTheCatAPICached(provideTheCatAPIRetrofit());

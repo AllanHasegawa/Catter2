@@ -13,10 +13,12 @@ import android.view.View;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.catter2.ImagesRvAdapter;
-import io.catter2.list_activity.ListActivity;
 import io.catter2.R;
 import io.catter2.favorites.GetFavoritesUseCase;
+import io.catter2.list_activity.ListActivity;
 
 public class FavoritesActivity extends AppCompatActivity {
 
@@ -27,14 +29,11 @@ public class FavoritesActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    @Inject
+    public GetFavoritesUseCase getFavoritesUseCase;
+
     private RecyclerView recyclerView;
     private ImagesRvAdapter rvAdapter;
-
-    private GetFavoritesUseCase getFavoritesUseCase;
-
-    public void injectGetFavoritesUserCase(GetFavoritesUseCase useCase) {
-        this.getFavoritesUseCase = useCase;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class FavoritesActivity extends AppCompatActivity {
         rvAdapter = new ImagesRvAdapter(null);
         recyclerView.setAdapter(rvAdapter);
 
-        new FavoritesActivityDIComponent().inject(this);
+        FavoritesActivityDIComponent.initializeAndInject(this);
     }
 
     @Override

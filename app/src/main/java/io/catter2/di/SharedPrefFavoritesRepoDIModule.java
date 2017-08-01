@@ -1,27 +1,23 @@
 package io.catter2.di;
 
+import android.content.Context;
+
 import io.catter2.favorites.FavoritesRepository;
 import io.catter2.favorites.SharedPrefFavoritesRepository;
 
-public class SharedPrefFavoritesRepoDIModule implements FavoritesRepoDIModule {
-    private AppDIComponent appDIComponent;
+public class SharedPrefFavoritesRepoDIModule extends FavoritesRepoDIModule {
     private String userToken;
 
-    public SharedPrefFavoritesRepoDIModule(AppDIComponent appDIComponent, String userToken) {
-        this.appDIComponent = appDIComponent;
+    public SharedPrefFavoritesRepoDIModule(String userToken) {
         this.userToken = userToken;
     }
 
     @Override
-    public AppDIComponent getAppDIComponent() {
-        return this.appDIComponent;
+    public FavoritesRepository provideFavoritesRepository(Context appContext, String userToken) {
+        return new SharedPrefFavoritesRepository(appContext, userToken);
     }
 
     @Override
-    public FavoritesRepository provideFavoritesRepository() {
-        return new SharedPrefFavoritesRepository(appDIComponent.getAppContext(), provideUserToken());
-    }
-
     public String provideUserToken() {
         return this.userToken;
     }

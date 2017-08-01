@@ -7,6 +7,7 @@ import android.util.Log;
 import io.catter2.di.AppDIComponent;
 import io.catter2.di.AppDIModule;
 import io.catter2.di.CachedRetrofitCatApiDIModule;
+import io.catter2.di.RetrofitCatApiDIModule;
 
 public class App extends Application {
     @Override
@@ -21,5 +22,8 @@ public class App extends Application {
             }
         };
         AppDIComponent.initialize(appDIModule, new CachedRetrofitCatApiDIModule());
+
+        // Option if you don't want to cache the cat API responses.
+        // AppDIComponent.initialize(appDIModule, new RetrofitCatApiDIModule());
     }
 }

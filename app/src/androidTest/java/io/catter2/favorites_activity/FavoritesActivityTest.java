@@ -5,6 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.catter2.R;
+import io.catter2.di.FavoritesRepoDIModule;
+import io.catter2.di.UserDIComponent;
 import io.catter2.espresso_utils.RecyclerViewItemCountAssertion;
 import io.catter2.favorites.FavoritesRepository;
 import io.catter2.favorites.GetFavoritesUseCase;
@@ -25,6 +28,12 @@ public class FavoritesActivityTest {
     @Rule
     public ActivityTestRule<FavoritesActivity> activityRule =
             new ActivityTestRule<>(FavoritesActivity.class, true, false /* Do not launch activity! */);
+
+    @BeforeClass
+    public static void beforeClass() {
+        // Warning: The AppDIComponent is still being created by the 'App' class!
+        UserDIComponent.initialize(mock(FavoritesRepoDIModule.class));
+    }
 
     @Test
     public void testThereAreThreeImages() {

@@ -1,9 +1,12 @@
 package io.catter2.di;
 
-import io.catter2.cat_api.TheCatAPI;
+import dagger.Component;
 import io.catter2.favorites.FavoritesRepository;
 
-public class UserDIComponent {
+@UserScope
+@Component(modules = FavoritesRepoDIModule.class,
+        dependencies = AppDIComponent.class)
+public abstract class UserDIComponent extends AppDIComponent {
     private static UserDIComponent instance;
 
     public static UserDIComponent get() {
@@ -14,30 +17,19 @@ public class UserDIComponent {
         if (UserDIComponent.get() != null) {
             throw new RuntimeException("UserDIComponent already initialized.");
         }
-        UserDIComponent.instance = new UserDIComponent(module);
+        UserDIComponent.instance = DaggerUserDIComponent.builder()
+                .appDIComponent(AppDIComponent.get())
+                .favoritesRepoDIModule(module)
+                .build();
     }
 
-    private FavoritesRepoDIModule module;
-    private FavoritesRepository favoritesRepository;
-
-    private UserDIComponent(FavoritesRepoDIModule module) {
-        this.module = module;
-    }
-
-    public TheCatAPI getTheCatAPIService() {
-        return this.module.getAppDIComponent().getTheCatAPI();
-    }
-
-    public FavoritesRepository getFavoritesRepository() {
-        if (favoritesRepository == null) {
-            favoritesRepository = module.provideFavoritesRepository();
-        }
-        return favoritesRepository;
-    }
+    public abstract FavoritesRepository getFavoritesRepository();
 
     public void close() {
+        final FavoritesRepository favoritesRepository = getFavoritesRepository();
         if (favoritesRepository != null) {
             favoritesRepository.clearChangeListener();
         }
+        UserDIComponent.instance = null;
     }
 }

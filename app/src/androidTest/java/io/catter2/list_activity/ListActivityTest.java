@@ -6,6 +6,7 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import java.util.List;
 import io.catter2.R;
 import io.catter2.cat_api.FetchCatImagesUseCase;
 import io.catter2.cat_api.TheCatAPI;
+import io.catter2.di.FavoritesRepoDIModule;
+import io.catter2.di.UserDIComponent;
 import io.catter2.espresso_utils.RecyclerViewItemCountAssertion;
 import io.catter2.favorites.AddFavoriteUseCase;
 import io.catter2.favorites.FavoritesRepository;
@@ -33,6 +36,12 @@ public class ListActivityTest {
     @Rule
     public ActivityTestRule<ListActivity> activityRule =
             new ActivityTestRule<>(ListActivity.class, true, false /* Do not launch activity! */);
+
+    @BeforeClass
+    public static void beforeClass() {
+        // Warning: The AppDIComponent is still being created by the 'App' class!
+        UserDIComponent.initialize(mock(FavoritesRepoDIModule.class));
+    }
 
     @Test
     public void testThereAreThreeImages() {

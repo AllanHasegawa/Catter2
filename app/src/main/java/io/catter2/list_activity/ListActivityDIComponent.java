@@ -1,16 +1,24 @@
 package io.catter2.list_activity;
 
+import javax.inject.Scope;
+
+import dagger.Component;
 import io.catter2.di.UserDIComponent;
 
-public class ListActivityDIComponent {
-    private ListActivityDIModule module;
-
-    public ListActivityDIComponent() {
-        this.module = new ListActivityDIModule(UserDIComponent.get());
+@Component(modules = ListActivityDIModule.class,
+        dependencies = UserDIComponent.class)
+@ListActivityDIComponent.ListActivityScope
+public abstract class ListActivityDIComponent {
+    @Scope
+    public @interface ListActivityScope {
     }
 
-    public void inject(ListActivity activity) {
-        activity.injectAddFavoriteUseCase(module.provideAddFavoriteUseCase());
-        activity.injectFetchCatImagesUseCase(module.provideFetchCatImagesUseCase());
+    public static void initializeAndInject(ListActivity activity) {
+        DaggerListActivityDIComponent.builder()
+                .userDIComponent(UserDIComponent.get())
+                .build()
+                .inject(activity);
     }
+
+    public abstract void inject(ListActivity activity);
 }

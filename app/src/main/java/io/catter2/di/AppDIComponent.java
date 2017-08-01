@@ -2,9 +2,14 @@ package io.catter2.di;
 
 import android.content.Context;
 
+import javax.inject.Singleton;
+
+import dagger.Component;
 import io.catter2.cat_api.TheCatAPI;
 
-public class AppDIComponent {
+@Singleton
+@Component(modules = {AppDIModule.class, TheCatAPIDIModule.class})
+public abstract class AppDIComponent {
     private static AppDIComponent instance;
 
     public static AppDIComponent get() {
@@ -15,31 +20,14 @@ public class AppDIComponent {
         if (AppDIComponent.get() != null) {
             throw new RuntimeException("AppDIComponent already initialized.");
         }
-        AppDIComponent.instance = new AppDIComponent(appDIModule, theCatAPIDIModule);
+        AppDIComponent.instance = DaggerAppDIComponent
+                .builder()
+                .appDIModule(appDIModule)
+                .theCatAPIDIModule(theCatAPIDIModule)
+                .build();
     }
 
-    private AppDIModule appDIModule;
-    private TheCatAPIDIModule theCatAPIDIModule;
+    abstract public Context getAppContext();
 
-    private Context appContext;
-    private TheCatAPI theCatAPI;
-
-    public AppDIComponent(AppDIModule appDIModule, TheCatAPIDIModule theCatAPIDIModule) {
-        this.appDIModule = appDIModule;
-        this.theCatAPIDIModule = theCatAPIDIModule;
-    }
-
-    public Context getAppContext() {
-        if (appContext == null) {
-            appContext = appDIModule.provideAppContext();
-        }
-        return appContext;
-    }
-
-    public TheCatAPI getTheCatAPI() {
-        if (theCatAPI == null) {
-            theCatAPI = theCatAPIDIModule.provideTheCatAPI();
-        }
-        return theCatAPI;
-    }
+    abstract public TheCatAPI getTheCatAPI();
 }
