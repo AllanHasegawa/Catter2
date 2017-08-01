@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FavoritesActivity"
+            android:name=".favorites_activity.FavoritesActivity"
             android:label="@string/title_activity_favorites"
             android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -33,11 +33,11 @@
         <activity
             android:name=".ListActivity"
             android:label="@string/title_activity_list"
-            android:parentActivityName=".FavoritesActivity"
+            android:parentActivityName=".favorites_activity.FavoritesActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.catter2.FavoritesActivity"/>
+                android:value="io.catter2.favorites_activity.FavoritesActivity"/>
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package io.catter2;
+package io.catter2.favorites_activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,9 @@ import android.view.View;
 
 import java.util.List;
 
-import io.catter2.di.UserDIComponent;
+import io.catter2.ImagesRvAdapter;
+import io.catter2.ListActivity;
+import io.catter2.R;
 import io.catter2.favorites.GetFavoritesUseCase;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -29,6 +31,10 @@ public class FavoritesActivity extends AppCompatActivity {
     private ImagesRvAdapter rvAdapter;
 
     private GetFavoritesUseCase getFavoritesUseCase;
+
+    public void injectGetFavoritesUserCase(GetFavoritesUseCase useCase) {
+        this.getFavoritesUseCase = useCase;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +57,7 @@ public class FavoritesActivity extends AppCompatActivity {
         rvAdapter = new ImagesRvAdapter(null);
         recyclerView.setAdapter(rvAdapter);
 
-        getFavoritesUseCase = new GetFavoritesUseCase(UserDIComponent.get().getFavoritesRepository());
+        new FavoritesActivityDIComponent().inject(this);
     }
 
     @Override

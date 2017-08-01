@@ -36,6 +36,7 @@ dependencies {
             mockito   : '2.+',
 
             espresso  : '2.2.2',
+            dexmaker   : '2.2.0',
     ]
 
     compile "com.android.support:appcompat-v7:$versions.supportLib"
@@ -52,6 +53,8 @@ dependencies {
     testCompile "junit:junit:$versions.junit"
     testCompile "org.mockito:mockito-core:$versions.mockito"
 
+    androidTestCompile "org.mockito:mockito-core:$versions.mockito"
+    androidTestCompile "com.linkedin.dexmaker:dexmaker-mockito:$versions.dexmaker"
     androidTestCompile("com.android.support.test.espresso:espresso-core:$versions.espresso", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
