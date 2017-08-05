@@ -14,14 +14,16 @@ Topics covered:
 
 # In action!
 
-![Catter2 in action](https://giant.gfycat.com/RapidGlassBasilisk.gif)
+[![Catter2 in action](https://img.youtube.com/vi/vWu1bTQsZWk/0.jpg)](https://www.youtube.com/watch?v=vWu1bTQsZWk)
 
 
 # How to study this repo
 
 All the instructions are in the following blog post:
 
-[TODO: add blog post url here]
+[Let's learn Dagger2 by refactoring a poorly coded Android app](https://medium.com/@AllanHasegawa/lets-learn-dagger2-by-refactoring-a-poorly-coded-android-app-a5015a8ae108)
+
+Spoilers: Look at the branches in this repo :3
 
 
 # License
