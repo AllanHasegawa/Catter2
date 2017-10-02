@@ -1,38 +1,25 @@
 package io.catter2.favorites_activity
 
-import dagger.Component
-import dagger.Module
-import dagger.Provides
-import io.catter2.di.UserDIComponent
-import io.catter2.favorites.FavoritesRepository
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.bind
+import com.github.salomonbrys.kodein.instance
+import com.github.salomonbrys.kodein.provider
+import io.catter2.di.UserKodein
 import io.catter2.favorites.GetFavoritesUseCase
-import javax.inject.Scope
 
-@Module
-object FavoritesActivityDIModule {
-    var testGetFavoritesUseCase: GetFavoritesUseCase? = null
-
-    @Provides
-    fun provideGetFavoritesUseCase(repository: dagger.Lazy<FavoritesRepository>): GetFavoritesUseCase =
-            testGetFavoritesUseCase ?: GetFavoritesUseCase(repository.get())
-}
-
-@Component(modules = arrayOf(FavoritesActivityDIModule::class),
-        dependencies = arrayOf(UserDIComponent::class))
-@FavoritesActivityDIComponent.FavoritesActivityScope
-abstract class FavoritesActivityDIComponent {
-    @Scope
-    annotation class FavoritesActivityScope
-
-    abstract fun inject(activity: FavoritesActivity)
-
+class FavoritesActivityKodein {
     companion object {
-        fun initializeAndInject(activity: FavoritesActivity) {
-            DaggerFavoritesActivityDIComponent.builder()
-                    .userDIComponent(UserDIComponent.instance)
-                    .favoritesActivityDIModule(FavoritesActivityDIModule)
-                    .build()
-                    .inject(activity)
+        var testGetFavoritesUseCase: GetFavoritesUseCase? = null
+    }
+
+    val kodein = Kodein {
+        extend(UserKodein.kodein!!)
+        bind<GetFavoritesUseCase>() with provider {
+            testGetFavoritesUseCase ?: GetFavoritesUseCase(instance())
         }
     }
+
+    fun inject(injector: KodeinInjector) = injector.inject(kodein)
 }
+

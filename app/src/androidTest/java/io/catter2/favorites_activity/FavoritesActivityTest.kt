@@ -7,7 +7,7 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.nhaarman.mockito_kotlin.mock
 import io.catter2.R
-import io.catter2.di.UserDIComponent
+import io.catter2.di.UserKodein
 import io.catter2.espresso_utils.RecyclerViewItemCountAssertion
 import io.catter2.favorites.GetFavoritesUseCase
 import org.junit.BeforeClass
@@ -17,13 +17,13 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class FavoritesActivityTest {
+open class FavoritesActivityTest {
     companion object {
         @BeforeClass
         @JvmStatic
         fun beforeClass() {
             // Warning: The AppDIComponent is still being created by the 'App' class!
-            UserDIComponent.initialize(mock())
+            UserKodein.initialize("user")
         }
     }
 
@@ -55,7 +55,7 @@ class FavoritesActivityTest {
     }
 
     private fun setUpGetFavoritesResponse(urls: List<String>) {
-        FavoritesActivityDIModule.testGetFavoritesUseCase =
+        FavoritesActivityKodein.testGetFavoritesUseCase =
                 object : GetFavoritesUseCase(mock()) {
                     override fun getFavorites(callback: (List<String>) -> Unit) {
                         callback(urls)

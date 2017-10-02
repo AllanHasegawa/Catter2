@@ -1,59 +1,36 @@
 package io.catter2.di
 
-import android.content.Context
-import dagger.Component
-import dagger.Module
-import dagger.Provides
+import android.util.Log
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.bind
+import com.github.salomonbrys.kodein.instance
+import com.github.salomonbrys.kodein.instanceOrNull
+import com.github.salomonbrys.kodein.provider
+import com.github.salomonbrys.kodein.singleton
+import com.github.salomonbrys.kodein.with
 import io.catter2.favorites.FavoritesRepository
-import javax.inject.Named
-import javax.inject.Scope
+import io.catter2.favorites.SharedPrefFavoritesRepository
 
 
-@Scope
-annotation class UserScope
+object UserKodein {
+    var kodein: Kodein? = null
+        private set
 
-
-@Module
-open class FavoritesRepoDIModule {
-    @Provides
-    @UserScope
-    open fun provideFavoritesRepository(
-            appContext: Context, @Named("UserToken") userToken: String): FavoritesRepository {
-        throw EmptyModuleException()
-    }
-
-    @Provides
-    @Named("UserToken")
-    @UserScope
-    open fun provideUserToken(): String {
-        throw EmptyModuleException()
-    }
-}
-
-
-@UserScope
-@Component(modules = arrayOf(FavoritesRepoDIModule::class),
-        dependencies = arrayOf(AppDIComponent::class))
-abstract class UserDIComponent : AppDIComponent() {
-    companion object {
-        var instance: UserDIComponent? = null
-            private set
-
-        fun initialize(module: FavoritesRepoDIModule) {
-            if (UserDIComponent.instance != null) {
-                throw RuntimeException("UserDIComponent already initialized.")
+    fun initialize(userToken: String) {
+        kodein?.run { throw RuntimeException("UserKodein already initialized.") }
+        kodein = Kodein {
+            extend(AppKodein.kodein)
+            constant("UserToken") with userToken
+            bind<FavoritesRepository>() with singleton {
+                Log.i("USER", "Creating FavoritesRepository")
+                SharedPrefFavoritesRepository(instance(), instance("UserToken"))
             }
-            UserDIComponent.instance = DaggerUserDIComponent.builder()
-                    .appDIComponent(AppDIComponent.instance)
-                    .favoritesRepoDIModule(module)
-                    .build()
         }
     }
 
-    abstract fun getFavoritesRepository(): FavoritesRepository?
-
-    fun close() {
-        getFavoritesRepository()?.clearChangeListener()
-        UserDIComponent.instance = null
+    fun clear() {
+        kodein?.instanceOrNull<FavoritesRepository>()?.clearChangeListener()
+        kodein = null
     }
 }
+

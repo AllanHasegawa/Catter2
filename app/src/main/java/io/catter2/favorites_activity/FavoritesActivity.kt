@@ -6,13 +6,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.instance
 import io.catter2.ImagesRvAdapter
 import io.catter2.R
 import io.catter2.favorites.GetFavoritesUseCase
 import io.catter2.list_activity.ListActivity
 import kotlinx.android.synthetic.main.activity_favorites.*
 import kotlinx.android.synthetic.main.content_favorites.*
-import javax.inject.Inject
 
 class FavoritesActivity : AppCompatActivity() {
     companion object {
@@ -24,8 +25,9 @@ class FavoritesActivity : AppCompatActivity() {
         }
     }
 
-    @Inject
-    lateinit var getFavoritesUseCase: GetFavoritesUseCase
+    private val injector = KodeinInjector()
+
+    private val getFavoritesUseCase by injector.instance<GetFavoritesUseCase>()
 
     private var rvAdapter: ImagesRvAdapter? = null
 
@@ -41,7 +43,7 @@ class FavoritesActivity : AppCompatActivity() {
         favorites_rv.layoutManager = LinearLayoutManager(this)
         favorites_rv.adapter = rvAdapter
 
-        FavoritesActivityDIComponent.initializeAndInject(this)
+        FavoritesActivityKodein().inject(injector)
     }
 
     override fun onResume() {

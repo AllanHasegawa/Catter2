@@ -13,7 +13,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import io.catter2.R
 import io.catter2.cat_api.FetchCatImagesUseCase
-import io.catter2.di.UserDIComponent
+import io.catter2.di.UserKodein
 import io.catter2.espresso_utils.RecyclerViewItemCountAssertion
 import io.catter2.favorites.AddFavoriteUseCase
 import org.junit.BeforeClass
@@ -25,13 +25,13 @@ import org.mockito.Mockito.verify
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ListActivityTest {
+open class ListActivityTest {
     companion object {
         @BeforeClass
         @JvmStatic
         fun beforeClass() {
             // Warning: The AppDIComponent is still being created by the 'App' class!
-            UserDIComponent.initialize(mock())
+            UserKodein.initialize("user")
         }
     }
 
@@ -61,7 +61,7 @@ class ListActivityTest {
         val mock = mock<AddFavoriteUseCase> {
             on { addFavoriteUrl("url0") } doReturn true
         }
-        ListActivityDIModule.testAddFavoriteUseCase = mock
+        ListActivityKodein.testAddFavoriteUseCase = mock
 
         activityRule.launchActivity(Intent())
 
@@ -77,12 +77,12 @@ class ListActivityTest {
     }
 
     private fun setUpListCatImages(urls: List<String>) {
-        ListActivityDIModule.testFetchCatImagesUseCase = object : FetchCatImagesUseCase(mock()) {
+        ListActivityKodein.testFetchCatImagesUseCase = object : FetchCatImagesUseCase(mock()) {
             override fun getImagesUrls(callback: (List<String>) -> Unit) {
                 callback(urls)
             }
         }
-        ListActivityDIModule.testAddFavoriteUseCase = // NoOp
+        ListActivityKodein.testAddFavoriteUseCase = // NoOp
                 AddFavoriteUseCase(mock())
     }
 }

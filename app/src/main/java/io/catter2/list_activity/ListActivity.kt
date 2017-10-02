@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.ImageView
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.instance
 import com.plattysoft.leonids.ParticleSystem
 import io.catter2.ImagesRvAdapter
 import io.catter2.R
@@ -15,7 +17,6 @@ import io.catter2.cat_api.FetchCatImagesUseCase
 import io.catter2.favorites.AddFavoriteUseCase
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.content_list.*
-import javax.inject.Inject
 
 class ListActivity : AppCompatActivity() {
     companion object {
@@ -27,8 +28,10 @@ class ListActivity : AppCompatActivity() {
         }
     }
 
-    @Inject lateinit var addFavoriteUseCase: AddFavoriteUseCase
-    @Inject lateinit var fetchCatImagesUseCase: FetchCatImagesUseCase
+    private val injector = KodeinInjector()
+
+    private val addFavoriteUseCase by injector.instance<AddFavoriteUseCase>()
+    private val fetchCatImagesUseCase by injector.instance<FetchCatImagesUseCase>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,7 @@ class ListActivity : AppCompatActivity() {
         list_rv.layoutManager = LinearLayoutManager(this)
         list_rv.adapter = adapter
 
-        ListActivityDIComponent.initializeAndInject(this)
+        ListActivityKodein().inject(injector)
         fetchCatImagesUseCase.getImagesUrls { urls -> adapter.updateImageUrls(urls) }
     }
 

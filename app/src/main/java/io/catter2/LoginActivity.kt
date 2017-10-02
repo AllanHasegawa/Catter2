@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import io.catter2.di.SharedPrefFavoritesRepoDIModule
-import io.catter2.di.UserDIComponent
+import io.catter2.di.UserKodein
 import io.catter2.favorites_activity.FavoritesActivity
 import io.catter2.login.LoginUseCase
 import kotlinx.android.synthetic.main.activity_login.*
@@ -32,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        UserDIComponent.instance?.close()
+        UserKodein.clear()
         super.onResume()
     }
 
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         when (token) {
             null -> login_error_tv.visibility = View.VISIBLE
             else -> {
-                UserDIComponent.initialize(SharedPrefFavoritesRepoDIModule(token))
+                UserKodein.initialize(token)
                 FavoritesActivity.launch(this)
             }
         }
